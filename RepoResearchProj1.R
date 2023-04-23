@@ -1,32 +1,3 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
-
-# Introduction
-
-It is now possible to collect a large amount of data about personal movement using activity monitoring devices such as a Fitbit, Nike Fuelband, or Jawbone Up. These type of devices are part of the “quantified self” movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. But these data remain under-utilized both because the raw data are hard to obtain and there is a lack of statistical methods and software for processing and interpreting the data.
-
-This Markdown document documents an assignment to make use of data from a personal activity monitoring device. This device collects data at 5 minute intervals through out the day. The data consists of two months of data from an anonymous individual collected during the months of October and November, 2012 and include the number of steps taken in 5 minute intervals each day.
-
-The variables included in this dataset are:
-
-steps: Number of steps taking in a 5-minute interval (missing values are coded as NA)
-
-date: The date on which the measurement was taken in YYYY-MM-DD format
-
-interval: Identifier for the 5-minute interval in which measurement was taken
-
-The dataset is stored in a comma-separated-value (CSV) file and there are a total of 17,568 observations in this dataset.
-
-
-## Loading and preprocessing the data
-
-Here is the code I used to load and initially process the data.  The only processing needed at this point was to 1. download and unzip the data, 2. add columns for the day of week and weekend vs. weekday designation, adn 3. suppress warnings that were occuring due ot working with date/time formats witout full information (i.e. time zones identified).
-
-```{r} 
 #load needed libraries
 library(ggplot2)
 
@@ -62,11 +33,9 @@ if (!exists("activity")) {
 
 #enable warnings again
 options(warn = defaultW)
-```
 
-## What is mean total number of steps taken per day?
-Here is the code that investigated the mean number of steps taken per day.
-```{r}
+#Question 1
+
 #Calculate total steps on a day
 activitytotal <- with(activity, aggregate(steps, by = list(date), sum, na.rm = TRUE))
 #Add names
@@ -87,13 +56,8 @@ Q1plot <- ggplot(totaldf, aes(x = Steps)) +
   ggtitle("Total Steps Taken on a Day")
 
 print(Q1plot)
-```
 
-This shows the mean as `r mean(activitytotal$Steps)` and the median as `r median(activitytotal$Steps)`
-
-## What is the average daily activity pattern?
-To investigate the average daily activity pattern, the following code was used.
-```{r}
+#Question 2
 #Calculate average steps across all days by 5-min intervals
 dailyaverage <- aggregate(activity$steps, by = list(activity$interval), 
                                   FUN = mean, na.rm = TRUE)
@@ -114,16 +78,8 @@ Q2Plot <- ggplot(averagedf, mapping = aes(Interval, Mean)) +
   ggtitle("Average Number of Steps Per Interval")
 
 print(Q2Plot)
-```
 
-This shows that the 5-minute interval that, on average, contains the maximum number of steps is `r dailyaverage[which.max(dailyaverage$Mean), ]$Interval`
-
-
-
-## Imputing missing values
-A number of values were missing (NA) in the data.  I replaced these values with the mean of the dataset to see what changes would be introduced and allow comparison to the first question.  Here is that code.
-
-```{r}
+#Question3
 missingsum<-sum(is.na(activity$steps))
 
 missingindex<-is.na(activity[,1])
@@ -153,13 +109,11 @@ Q3plot <- ggplot(totaldf1, aes(x = Steps)) +
   ggtitle("Total Steps Taken on a Day with Imputed Data")
 
 print(Q3plot)
-```
 
 
-## Are there differences in activity patterns between weekdays and weekends?
+#Question4
 
-The final investigation of the data was to compare step activity on weekdays and weekends.  Here is that code.
-```{r}
+#Create data set to plot
 activitybyday <-  aggregate(steps ~ interval + daytype, activity, mean, na.rm = TRUE)
 
 #Plot weekday vs weekend activity
@@ -175,4 +129,13 @@ Q4Plot <-  ggplot(activitybyday,
     scale_color_discrete(name = "Weekend vs Weekday")
 
 print(Q4Plot)
-```
+
+
+
+
+
+
+
+
+
+

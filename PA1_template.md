@@ -26,7 +26,8 @@ The dataset is stored in a comma-separated-value (CSV) file and there are a tota
 
 Here is the code I used to load and initially process the data.  The only processing needed at this point was to 1. download and unzip the data, 2. add columns for the day of week and weekend vs. weekday designation, adn 3. suppress warnings that were occuring due ot working with date/time formats witout full information (i.e. time zones identified).
 
-```{r} 
+
+```r
 #load needed libraries
 library(ggplot2)
 
@@ -66,7 +67,8 @@ options(warn = defaultW)
 
 ## What is mean total number of steps taken per day?
 Here is the code that investigated the mean number of steps taken per day.
-```{r}
+
+```r
 #Calculate total steps on a day
 activitytotal <- with(activity, aggregate(steps, by = list(date), sum, na.rm = TRUE))
 #Add names
@@ -74,8 +76,21 @@ names(activitytotal) <- c("Date", "Steps")
 
 #Get Mean and Median
 mean(activitytotal$Steps)
-median(activitytotal$Steps)
+```
 
+```
+## [1] 9354.23
+```
+
+```r
+median(activitytotal$Steps)
+```
+
+```
+## [1] 10395
+```
+
+```r
 #Convert data set to data frame
 totaldf <- data.frame(activitytotal)
 
@@ -89,11 +104,14 @@ Q1plot <- ggplot(totaldf, aes(x = Steps)) +
 print(Q1plot)
 ```
 
-This shows the mean as `r mean(activitytotal$Steps)` and the median as `r median(activitytotal$Steps)`
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+This shows the mean as 9354.2295082 and the median as 10395
 
 ## What is the average daily activity pattern?
 To investigate the average daily activity pattern, the following code was used.
-```{r}
+
+```r
 #Calculate average steps across all days by 5-min intervals
 dailyaverage <- aggregate(activity$steps, by = list(activity$interval), 
                                   FUN = mean, na.rm = TRUE)
@@ -102,7 +120,13 @@ names(dailyaverage) <- c("Interval", "Mean")
 
 #Max interval
 dailyaverage[which.max(dailyaverage$Mean), ]$Interval
+```
 
+```
+## [1] 835
+```
+
+```r
 #Convert to a dataframe
 averagedf <- data.frame(dailyaverage)
 
@@ -116,14 +140,17 @@ Q2Plot <- ggplot(averagedf, mapping = aes(Interval, Mean)) +
 print(Q2Plot)
 ```
 
-This shows that the 5-minute interval that, on average, contains the maximum number of steps is `r dailyaverage[which.max(dailyaverage$Mean), ]$Interval`
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+This shows that the 5-minute interval that, on average, contains the maximum number of steps is 835
 
 
 
 ## Imputing missing values
 A number of values were missing (NA) in the data.  I replaced these values with the mean of the dataset to see what changes would be introduced and allow comparison to the first question.  Here is that code.
 
-```{r}
+
+```r
 missingsum<-sum(is.na(activity$steps))
 
 missingindex<-is.na(activity[,1])
@@ -140,8 +167,21 @@ names(activitytotal1) <- c("Date", "Steps")
 
 #Get Mean and Median
 mean(activitytotal1$Steps)
-median(activitytotal1$Steps)
+```
 
+```
+## [1] 10766.19
+```
+
+```r
+median(activitytotal1$Steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 #Convert data set to data frame
 totaldf1 <- data.frame(activitytotal1)
 
@@ -155,11 +195,14 @@ Q3plot <- ggplot(totaldf1, aes(x = Steps)) +
 print(Q3plot)
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
 The final investigation of the data was to compare step activity on weekdays and weekends.  Here is that code.
-```{r}
+
+```r
 activitybyday <-  aggregate(steps ~ interval + daytype, activity, mean, na.rm = TRUE)
 
 #Plot weekday vs weekend activity
@@ -176,3 +219,5 @@ Q4Plot <-  ggplot(activitybyday,
 
 print(Q4Plot)
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
